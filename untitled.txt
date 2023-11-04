@@ -1,0 +1,302 @@
+bfs:
+
+import heapq
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.neighbors = []
+
+def best_first_search(start, target_value):
+    visited = set()
+    pq = [(start.value, start)]
+
+    while pq:
+        _, current = heapq.heappop(pq)
+        print(f"Visiting node with value: {current.value}")
+
+        if current.value == target_value:
+            print("Target value found!")
+            return True
+
+        visited.add(current)
+
+        for neighbor in current.neighbors:
+            if neighbor not in visited:
+                heapq.heappush(pq, (neighbor.value, neighbor))
+
+    print("Target value not found!")
+    return False
+
+if __name__ == "__main__":
+    node1 = Node(5)
+    node2 = Node(10)
+    node3 = Node(3)
+    node4 = Node(8)
+
+    node1.neighbors.extend([node2, node3])
+    node2.neighbors.append(node4)
+    node3.neighbors.append(node4)
+
+    target_value = 8
+    best_first_search(node1, target_value)
+
+dfdls:
+
+class Node:
+    def __init__(self, value, children=[]):
+        self.value = value
+        self.children = children
+
+def depth_limited_search(node, goal, depth_limit):
+    if node.value == goal:
+        return node
+
+    if depth_limit == 0:
+        return None
+
+    for child in node.children:
+        result = depth_limited_search(child, goal, depth_limit - 1)
+        if result is not None:
+            return result
+
+    return None
+
+if __name__ == "__main__":
+    root = Node(1, [])
+    child1 = Node(2, [])
+    child2 = Node(3, [])
+    child3 = Node(4, [])
+
+    root.children = [child1, child2]
+    child1.children = [child3]
+
+    goal = 4
+    depth_limit = 2
+
+    result = depth_limited_search(root, goal, depth_limit)
+
+    if result is not None:
+        print("Goal is:", result.value)
+
+    else:
+        print("Goal is not achieved")
+
+    # No need to delete objects in Python, the memory management is handled automatically.
+hill climbing:
+import random
+
+distances = [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+]
+
+def calculateTotalDistance(route):
+    totalDistance = 0
+    num_cities = len(route)
+    for i in range(num_cities - 1):
+        from_city = route[i]
+        to_city = route[i + 1]
+        totalDistance += distances[from_city][to_city]
+    totalDistance += distances[route[-1]][route[0]]
+    return totalDistance
+
+if __name__ == "__main__":
+    random.seed()
+    num_cities = len(distances)
+    current_route = list(range(num_cities))
+    random.shuffle(current_route[1:])
+    current_distance = calculateTotalDistance(current_route)
+    max_iterations = 1000
+
+    for iter in range(max_iterations):
+        neighbor_route = current_route[:]
+        random_index1 = random.randint(1, num_cities - 1)
+        random_index2 = random.randint(1, num_cities - 1)
+        neighbor_route[random_index1], neighbor_route[random_index2] = neighbor_route[random_index2], neighbor_route[random_index1]
+        neighbor_distance = calculateTotalDistance(neighbor_route)
+
+        if neighbor_distance < current_distance:
+            current_route = neighbor_route
+            current_distance = neighbor_distance
+
+    print("Final Route:", current_route)
+    print("Final Distance:", current_distance)
+
+alpha beta:
+
+class Node:
+  def __init__(self,value,children=None):
+    self.value=value
+    self.children=children if children is not None else []
+def alpha_beta(node,alpha,beta,maximisingPlayer):
+  if not node.children:
+    return node.value
+
+  bestValue = float('-inf') if maximisingPlayer else float('inf')
+  for child in node.children:
+    value = alpha_beta(child,alpha,beta,not maximisingPlayer)
+    bestValue= max(bestValue,value) if maximisingPlayer else min(bestValue,value)
+    alpha=max(bestValue,alpha) if maximisingPlayer else alpha
+    beta=min(bestValue,beta) if not maximisingPlayer else beta
+    if beta<=alpha:
+      break
+  return bestValue
+root = Node(10,[Node(5,[Node(2),Node(8)]),Node(6,[Node(12),Node(14)])])
+result = alpha_beta(root,float('-inf'),float('inf'),True)
+print("Optimal Value is : ",result)
+
+csp:
+def exp6(mat,r,c):
+  for i in range(r):
+    if mat[i][c]=='Q':
+      return False
+  for i,j in zip(range(r,-1,-1),range(c,-1,-1)):
+    if mat[i][j]=='Q':
+      return False
+  for i,j in zip(range(r,-1,-1),range(c,len(mat))):
+    if mat[i][j]=='Q':
+      return False
+  return True
+def output(mat):
+ for r in mat:
+  print("".join(r))
+  print()
+ print("end")
+def nQueen(mat,r,n):
+  if r==n:
+    output(mat)
+    return
+  for i in range(n):
+    if exp6(mat,r,i):
+      mat[r][i]='Q'
+      nQueen(mat,r+1,n)
+      mat[r][i]='-'
+if __name__=="__main__":
+  n=8
+  mat=[['-' for x in range(n)] for y in range(n)]
+  nQueen(mat,0,n)
+
+genetic:
+import random
+
+# Number of individuals in each generation
+POPULATION_SIZE = 100
+
+# Valid genes
+GENES = '''abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.-;:_!"#%&/()=?@${[]}'''
+
+# Target string to be generated
+TARGET = input("Enter Target String: ")
+
+class Individual:
+    def __init__(self, chromosome):
+        self.chromosome = chromosome
+        self.fitness = self.cal_fitness()
+
+    @classmethod
+    def mutated_genes(cls):
+        global GENES
+        gene = random.choice(GENES)
+        return gene
+
+    @classmethod
+    def create_gnome(cls):
+        global TARGET
+        gnome_len = len(TARGET)
+        return [cls.mutated_genes() for _ in range(gnome_len)]
+
+    def mate(self, par2):
+        child_chromosome = []
+        for gp1, gp2 in zip(self.chromosome, par2.chromosome):
+            prob = random.random()
+            if prob < 0.45:
+                child_chromosome.append(gp1)
+            elif prob < 0.90:
+                child_chromosome.append(gp2)
+            else:
+                child_chromosome.append(self.mutated_genes())
+        return Individual(child_chromosome)
+
+    def cal_fitness(self):
+        global TARGET
+        fitness = 0
+        for gs, gt in zip(self.chromosome, TARGET):
+            if gs != gt:
+                fitness += 1
+        return fitness
+
+def main():
+    global POPULATION_SIZE
+    generation = 1
+    found = False
+    population = []
+
+    for _ in range(POPULATION_SIZE):
+        gnome = Individual.create_gnome()
+        population.append(Individual(gnome))
+
+    while not found:
+        population = sorted(population, key=lambda x: x.fitness)
+        if population[0].fitness <= 0:
+            found = True
+            break
+
+        new_generation = []
+        s = int((10 * POPULATION_SIZE) / 100)
+        new_generation.extend(population[:s])
+
+        s = int((90 * POPULATION_SIZE) / 100)
+        for _ in range(s):
+            parent1 = random.choice(population[:50])
+            parent2 = random.choice(population[:50])
+            child = parent1.mate(parent2)
+            new_generation.append(child)
+
+        population = new_generation
+
+        print(f"Generation: {generation}\tString: {''.join(population[0].chromosome)}\tFitness: {population[0].fitness}")
+        generation += 1
+
+    print(f"Generation: {generation}\tString: {''.join(population[0].chromosome)}\tFitness: {population[0].fitness}")
+
+if __name__ == '__main__':
+    main()
+
+
+decision trree:
+
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeRegressor
+import numpy as np
+
+np.random.seed(0)
+X = np.sort(5 * np.random.rand(80, 1), axis=0)
+y = np.sin(X).ravel()
+y += 0.1 * (np.random.rand(80) - 0.5)
+
+# Split the data into training and testing sets
+X_train, X_test = X[:60], X[60:]
+y_train, y_test = y[:60], y[60:]
+
+# Create a decision tree regressor
+regressor = DecisionTreeRegressor(max_depth=5)
+
+# Train the regressor on the training data
+regressor.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred = regressor.predict(X_test)
+
+# Plot the results
+plt.figure()
+plt.scatter(X, y, s=20, edgecolor="black", c="darkorange", label="data")
+plt.plot(X_test, y_pred, color="cornflowerblue", linewidth=2, label="prediction")
+plt.xlabel("data")
+plt.ylabel("target")
+plt.title("Decision Tree Regression")
+plt.legend()
+plt.show()
+
