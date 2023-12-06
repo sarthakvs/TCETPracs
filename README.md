@@ -7,4 +7,4 @@ While I have tried to get all the codes I can,I understand that the syllabus in 
 # Want to Contribute?
 You are always welcome to contribute to this repo,just create a valid pull req,I will verify and add it to the main tree.
 
-Happy coding :)
+Have fun! Happy coding :)
