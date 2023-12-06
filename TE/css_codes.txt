@@ -1,0 +1,501 @@
+//caesar encrypt and decrypt
+def encrypt_text(plaintext,n):
+    ans = ""
+    # iterate over the given text
+    for i in range(len(plaintext)):
+        ch = plaintext[i]
+        
+        # check if space is there then simply add space
+        if ch==" ":
+            ans+=" "
+        # check if a character is uppercase
+        elif (ch.isupper()):
+            ans += chr((ord(ch) + n-65) % 26 + 65)
+        # check if a character is lowercase
+        
+        else:
+            ans += chr((ord(ch) + n-97) % 26 + 97)
+    
+    return ans
+
+def dencrypt_text(plaintext,n):
+    ans = ""
+    # iterate over the given text
+    for i in range(len(plaintext)):
+        ch = plaintext[i]
+        
+        # check if space is there then simply add space
+        if ch==" ":
+            ans+=" "
+        # check if a character is uppercase 
+        elif (ch.isupper()):
+            ans += chr((ord(ch) - n-65) % 26 + 65)
+        # check if a character is lowercase
+        
+        else:
+            ans += chr((ord(ch) - n-97) % 26 + 97)
+    
+    return ans
+
+
+plaintext = input("Enter the Text Message: ")
+n = 3
+print("Plain Text is : " + plaintext)
+print("Shift pattern is : " + str(n))
+text = encrypt_text(plaintext,n)
+print("Encoded Text is : " + text)
+print("Decoded Text is : " + dencrypt_text(text,n))
+
+//caesar encrypt decrypt with shift value
+def encrypt_text(plaintext,n):
+    ans = ""
+    # iterate over the given text
+    for i in range(len(plaintext)):
+        ch = plaintext[i]
+        
+        # check if space is there then simply add space
+        if ch==" ":
+            ans+=" "
+        # check if a character is uppercase 
+        elif (ch.isupper()):
+            ans += chr((ord(ch) + n-65) % 26 + 65)
+        # check if a character is lowercase 
+        else:
+            ans += chr((ord(ch) + n-97) % 26 + 97)
+    
+    return ans
+
+def dencrypt_text(plaintext,n):
+    ans = ""
+    # iterate over the given text
+    for i in range(len(plaintext)):
+        ch = plaintext[i]
+        
+        # check if space is there then simply add space
+        if ch==" ":
+            ans+=" "
+        # check if a character is uppercase 
+        elif (ch.isupper()):
+            ans += chr((ord(ch) - n-65) % 26 + 65)
+        # check if a character is lowercase 
+        
+        else:
+            ans += chr((ord(ch) - n-97) % 26 + 97)
+    
+    return ans
+
+
+plaintext = input("Enter the Text Message: ")
+n = int(input("Enter Shift value: "))
+print("Plain Text is : " + plaintext)
+print("Shift pattern is : " + str(n))
+text = encrypt_text(plaintext,n)
+print("Encoded Text is : " + text)
+print("Decoded Text is : " + dencrypt_text(text,n))
+
+//multiplicative cipher
+from sympy import mod_inverse
+import math
+
+def multiplicative_cypher(text,mode,key):
+    char_dict={}
+    cipher_message = ''
+    for i in range(26):
+         char_dict[chr(ord('a') + i)]=i
+    key_list=list(char_dict.keys())
+    inv_char_dict = dict(zip(char_dict.values(),char_dict.keys()))
+    
+    if mode == 'encrypt':
+        if math.gcd( 26,key) == 1:
+            for char in text:
+                if char in key_list:
+                    new_index=(char_dict[char]*key)%26
+                    cipher_message=cipher_message+inv_char_dict[new_index]
+                else:
+                    cipher_message=cipher_message+char
+        else:
+            print('invalid key selected')
+            
+        return cipher_message         
+        
+    if mode == 'decrypt':
+        mult_inv=mod_inverse(key, 26)
+        for char in text:
+            if char in key_list:
+                new_index=(char_dict[char]*mult_inv)%26
+                cipher_message=cipher_message+inv_char_dict[new_index]
+            else:
+                cipher_message=cipher_message+char
+    
+    return cipher_message
+
+
+text = input("Enter the message: ")
+n = int(input("Enter the key: "))
+encrypt_message=multiplicative_cypher(text,'encrypt',n)
+print("Encoded Text is : ",encrypt_message)
+
+encrypt_message=multiplicative_cypher(encrypt_message,'decrypt',n)
+print("Decoded Text is : ",encrypt_message)
+
+//encode decode keyless rail fence
+def encryptRailFence(text, key):
+	rail = [['\n' for i in range(len(text))]
+				for j in range(key)]
+	
+	dir_down = False
+	row, col = 0, 0
+	
+	for i in range(len(text)):
+		if (row == 0) or (row == key - 1):
+			dir_down = not dir_down
+
+		rail[row][col] = text[i]
+		col += 1
+		
+		if dir_down:
+			row += 1
+		else:
+			row -= 1
+
+	result = []
+	for i in range(key):
+		for j in range(len(text)):
+			if rail[i][j] != '\n':
+				result.append(rail[i][j])
+	return("" . join(result))
+	
+def decryptRailFence(cipher, key):
+
+	rail = [['\n' for i in range(len(cipher))]
+				for j in range(key)]
+	
+	dir_down = None
+	row, col = 0, 0
+	
+	for i in range(len(cipher)):
+		if row == 0:
+			dir_down = True
+		if row == key - 1:
+			dir_down = False
+		
+		rail[row][col] = '*'
+		col += 1
+		
+		if dir_down:
+			row += 1
+		else:
+			row -= 1
+			
+	index = 0
+	for i in range(key):
+		for j in range(len(cipher)):
+			if ((rail[i][j] == '*') and
+			(index < len(cipher))):
+				rail[i][j] = cipher[index]
+				index += 1
+		
+	result = []
+	row, col = 0, 0
+	for i in range(len(cipher)):
+		
+		if row == 0:
+			dir_down = True
+		if row == key-1:
+			dir_down = False
+			
+		if (rail[row][col] != '*'):
+			result.append(rail[row][col])
+			col += 1
+			
+		if dir_down:
+			row += 1
+		else:
+			row -= 1
+	return("".join(result))
+
+
+text = input("Enter the message: ")
+n = int(input("Enter the key: "))
+encrypt_message = encryptRailFence(text, n)
+print("Encode Text: ",encryptRailFence(text, n))
+
+print("Decode Text: ",decryptRailFence(encrypt_message,n))
+
+//columnar encrypt and decrypt
+def columnar_encryption(text, key):
+  ct = ''
+  arr = [[None for i in range(len(key))] for j in range(len(key))]
+
+  k = 0
+  for i in range(len(key)):
+    for j in range(len(key)):
+      if k < len(text):
+        arr[i][j] = text[k]
+        k +=1
+      else:
+        arr[i][j] = 'X'
+ 
+  for i in key:
+    for j in range(len(key)):
+      
+      ct += arr[j][int(i)-1]
+  return ct, arr
+  
+def columnar_decryption(ct, key):
+  text = ''
+  arr = [[None for i in range(len(key))] for j in range(len(key))]
+  k = 0
+  for i in key:
+    for j in range(len(key)):
+      if k < len(ct):
+        arr[j][int(i)-1] = ct[k]
+        k +=1
+      else:
+        arr[i][j] = ''
+  print(arr)
+  for i in range(len(key)):
+    for j in range(len(key)):
+      if arr[i][j] != 'X':
+        text += arr[i][j]
+  
+  return text, arr
+
+
+text = input("Enter the message: ")
+n = input("Enter the key: ")
+encrypt_message=columnar_encryption(text, n)
+print("Encode Text: ",encrypt_message[0])
+
+print("Decode Text: ",columnar_decryption(encrypt_message[0],n)[0])
+
+//encrypt with keyword sequence matrix
+def encrypt(message, keyword):
+  matrix = createEncMatrix(len(keyword), message)
+  keywordSequence = getKeywordSequence(keyword)
+
+  ciphertext = "";
+  for num in range(len(keywordSequence)):
+    pos = keywordSequence.index(num+1)
+    for row in range(len(matrix)):
+      if len(matrix[row]) > pos:
+        ciphertext += matrix[row][pos]
+  return ciphertext
+
+
+def createEncMatrix(width, message):
+  r = 0
+  c = 0
+  matrix = [[]]
+  for pos, ch in enumerate(message):
+    matrix[r].append(ch)
+    c += 1
+    if c >= width:
+      c = 0
+      r += 1
+      matrix.append([])
+
+  return matrix
+
+
+def getKeywordSequence(keyword):
+  sequence = []
+  for pos, ch in enumerate(keyword):
+    previousLetters = keyword[:pos]
+    newNumber = 1
+    for previousPos, previousCh in enumerate(previousLetters):
+      if previousCh > ch:
+        sequence[previousPos] += 1
+      else:
+        newNumber += 1
+    sequence.append(newNumber)
+  return sequence
+
+txt = input("Cipher text: ")
+size = int(input("Enter key size: "))
+s = []
+while size>0 :
+    value = int(input("Key: "))
+    s.append(value)
+    size -=1
+  
+print("Plain text: " + encrypt(txt, s))
+
+//diffie hellman exchange algorithm
+p=int(input("The value of p: "))
+q=int(input("The value of q: "))
+a=int(input('The Private Key a for Alice is: '))
+b=int(input('The Private Key b for Bob is: '))
+print("Generated key for Alice: ",pow(q,a)%p)
+R=pow(q,a)%p
+print("Generated key for Bob: ",pow(q,b)%p)
+S=pow(q,b)%p
+print("Secret key for the Alice is: ",pow(S,a)%p)
+Rk=pow(S,q)%p
+print("Secret Key for the Bob is: ",pow(R,b)%p)
+Sk=pow(R,b)%p
+
+//rsa algorithm
+import math
+def gcd(a, h):
+	temp = 0
+	while(1):
+		temp = a % h
+		if (temp == 0):
+			return h
+		a = h
+		h = temp
+# p = 3
+# q = 7
+p = int(input("Enter the value of p: "))
+q = int(input("Enter the value of q: "))
+n = p*q
+e = 2
+phi = (p-1)*(q-1)
+while (e < phi):
+	if(gcd(e, phi) == 1):
+		break
+	else:
+		e = e+1
+k = 2
+d = (1 + (k*phi))/e
+# msg = 12.0
+msg = int(input("Enter the message: "))
+
+print("Message data = ", msg)
+
+c = pow(msg, e)
+c = math.fmod(c, n)
+print("Encrypted data = ", int(c))
+
+m = pow(c, d)
+m = math.fmod(m, n)
+print("Original Message Sent = ", int(m))
+
+//message digest 5 algorithm
+import math 
+import hashlib
+rotate_by = [7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+             5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
+             4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+             6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21]
+constants = [int(abs(math.sin(i+1)) * 4294967296) & 0xFFFFFFFF for i in range(64)] 
+def pad(msg): 
+    msg_len_in_bits = (8*len(msg)) & 0xffffffffffffffff 
+    msg.append(0x80)
+    while len(msg)%64 != 56: 
+        msg.append(0)
+        msg += msg_len_in_bits.to_bytes(8, byteorder='little') 
+    return msg 
+init_MDBuffer = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476] 
+def leftRotate(x, amount): 
+    x &= 0xFFFFFFFF 
+    return (x << amount | x >> (32-amount)) & 0xFFFFFFFF 
+def processMessage(msg): 
+ init_temp = init_MDBuffer[:]   
+ for offset in range(0, len(msg), 64):
+     A, B, C, D = init_temp
+     block = msg[offset : offset+64]
+     for i in range(64):
+        if i < 16:
+             func = lambda b, c, d: (b & c) | (~b & d) 	 	 	 	
+             index_func = lambda i: i
+        elif i >= 16 and i < 32:
+            func = lambda b, c, d: (d & b) | (~d & c) 	 	 	 	
+            index_func = lambda i: (5*i + 1)%16  	 	 	
+        elif i >= 32 and i < 48:
+            func = lambda b, c, d: b ^ c ^ d 	 	 	
+            index_func = lambda i: (3*i + 5)%16
+        elif i >= 48 and i < 64:
+            func = lambda b, c, d: c ^ (b | ~d)  	 	 	 	
+            index_func = lambda i: (7*i)%16 
+        F = func(B, C, D)   	 	 	
+        G = index_func(i)  
+        to_rotate = A + F + constants[i] + int.from_bytes(block[4*G : 4*G + 4], byteorder='little') 
+        newB = (B + leftRotate(to_rotate, rotate_by[i])) & 0xFFFFFFFF  	 	 	
+        A, B, C, D = D, newB, B, C 
+        for i, val in enumerate([A, B, C, D]):
+            init_temp[i] += val
+            init_temp[i] &= 0xFFFFFFFF 
+ return sum(buffer_content<<(32*i) for i, buffer_content in enumerate(init_temp)) 
+def MD_to_hex(digest): 	  	
+    raw = digest.to_bytes(16, byteorder='little')  	
+    return '{:032x}'.format(int.from_bytes(raw, byteorder='big')) 
+def md5(msg): 
+    msg = bytearray(msg, 'ascii')   
+    msg = pad(msg) 
+    processed_msg = processMessage(msg)  	
+    message_hash = MD_to_hex(processed_msg)  	
+    print("Hash Value: ", message_hash) 
+def hash_value(msg):
+    hashvalue = hashlib.md5(msg.encode()).hexdigest()
+    print("Hash value using hashlib: ", hashvalue)
+if __name__ == '__main__': 
+    print ("Enter the message to be hashed: ")
+    message = input() 
+    md5(message) 
+    hash_value(message)
+
+// message digest with blocks
+def divide_into_blocks(number):
+    blocks = []
+    for i in range(4):
+        blocks.append((number >> (i * 2)) & 0x3)
+    return blocks
+
+
+def hash(hash_blocks, plaintext_blocks):
+    hashtext = []
+    hashtext.append((hash_blocks[0] + plaintext_blocks[1]) % 4)
+    hashtext.append(hash_blocks[1] ^ plaintext_blocks[2])
+    hashtext.append((hash_blocks[2] + plaintext_blocks[3]) % 4)
+    hashtext.append(hash_blocks[3] ^ plaintext_blocks[0])
+    return hashtext
+
+
+hash_value = int(input("Enter the hash value (up to 8 bits): "))
+plaintext = int(input("Enter the plaintext (up to 8 bits): "))
+
+if hash_value < 0 or hash_value > 255:
+    print("Invalid input! Hash value/plaintext should be an 8-bit number (0-255).")
+    exit()
+
+if plaintext < 0 or plaintext > 255:
+    print("Invalid plaintext! Plaintext should be an 8-bit number (0-255).")
+    exit()
+
+hash_blocks = divide_into_blocks(hash_value)
+print("Hash Value Blocks:")
+for block in hash_blocks:
+    print(block, end=" ")
+
+plaintext_blocks = divide_into_blocks(plaintext)
+print("\nPlaintext Blocks:")
+for block in plaintext_blocks:
+    print(block, end=" ")
+
+msg_digest = hash(hash_blocks, plaintext_blocks)
+print("\nMessage Digest:", end=" ")
+for i in range(4):
+    print(msg_digest[i], end=" ")
+//secured hash with salt
+import hashlib
+import hmac
+import os
+
+def secure_hash(input_string, secret_key):
+    # Generate a random salt value
+    salt = os.urandom(16)
+
+    # Hash the input string iteratively with the salt value
+    hash_value = input_string.encode('utf-8') + salt
+    for i in range(1000):
+        hash_value = hashlib.sha256(hash_value).digest()
+
+    # Generate a keyed hash using the secret key
+    keyed_hash = hmac.new(secret_key.encode('utf-8'), hash_value, hashlib.sha256).digest()
+
+    # Return the salt and the keyed hash concatenated together
+    return salt + keyed_hash
+
+
