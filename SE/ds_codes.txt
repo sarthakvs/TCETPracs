@@ -1,4 +1,4 @@
-DataTypesOperatorsDemo 
+//DataTypesOperatorsDemo 
 import java.util.Scanner; 
  
 public class DataTypesOperatorsDemo { 
@@ -122,7 +122,7 @@ public class DataTypesOperatorsDemo {
  
  
  
-ControlStatementMenu 
+//ControlStatementMenu 
 import java.util.Scanner; 
  
 public class ControlStatementMenu { 
@@ -236,7 +236,7 @@ valid option.");
  
  
  
-Stack1 
+//Stack1 
 import java.util.Scanner; 
  
 class Stack { 
@@ -325,7 +325,7 @@ public class Stack1 {
  
  
  
-Queue1 
+//Queue1 
 import java.util.Scanner; 
  
 class Queue { 
@@ -428,7 +428,7 @@ public class Queue1 {
  
  
  
-CircularQueue 
+//CircularQueue 
 import java.util.Scanner; 
  
 class CircularQ { 
@@ -538,7 +538,7 @@ public class CircularQueue {
  
  
  
-BinarySearchTree 
+//BinarySearchTree 
 import java.util.Scanner; 
  
 class Node { 
@@ -662,7 +662,7 @@ class BinarySearchTree {
  
  
  
-BFS 
+//BFS 
 import java.util.LinkedList; 
 import java.util.Queue; 
 import java.util.Scanner; 
@@ -738,7 +738,7 @@ class BFS {
  
  
  
-DFSMenuDriven 
+//DFSMenuDriven 
 import java.util.*; 
  
 class Graph { 
@@ -822,7 +822,7 @@ public class DFSMenuDriven {
  
  
  
-SinglyLinkedListMenu 
+//SinglyLinkedListMenu 
 import java.util.Scanner; 
  
 class Node { 
@@ -932,7 +932,7 @@ beginning.");
  
  
  
-DOUBLY LINKED LIST(NOT MENU DRIVEN) 
+//DOUBLY LINKED LIST(NOT MENU DRIVEN) 
 Develop a code to implement doubly linked list. 
 public class DoublyLinkedList { 
  //Represent a node of the doubly linked list 
@@ -994,7 +994,9 @@ dList.addNode(3);
 //Displays the nodes present in the list 
 dList.display(); 
 } } 
-AVLTree(insert and display) 
+
+
+//AVLTree(insert and display) 
 import java.util.Scanner; 
 class TreeNode { 
 int data; 
@@ -1146,7 +1148,9 @@ again.");
 } 
 } 
 } 
-AVL TREE MENU DRIVEN (INSERT, DELETE, PRE ORDER, POST ORDER, INORDER) 
+
+
+//AVL TREE MENU DRIVEN (INSERT, DELETE, PRE ORDER, POST ORDER, INORDER) 
 import java.util.Scanner; 
 class AVLNode { 
 int data, height; 
