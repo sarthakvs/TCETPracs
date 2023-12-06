@@ -1,0 +1,900 @@
+8bit display:
+
+.model small
+.stack
+.data
+m1 db 10,13, "enter 8bit no:$"
+m2 db 10,13, "display 8bit no:$"
+num db ?
+.code
+.startup
+mov ah,09
+lea dx,m1
+int 21h
+
+mov ah,01
+int 21h
+
+sub al,30h
+mov cl,4
+shl al,cl
+mov bh,al
+
+mov ah,01
+int 21h
+
+sub al,30h
+add bh,al
+
+mov num,bh
+
+mov ah,09
+lea dx,m2
+int 21h
+
+mov bl,num
+and bl,0f0h
+mov cl,4
+shr bl,cl
+add bl,30h
+mov dl,bl
+
+mov ah,02
+int 21h
+
+mov bl,num
+and bl,0fh
+add bl,30h
+mov dl,bl
+
+mov ah,02
+int 21h
+.exit
+end
+
+16bit display:
+.model small
+.stack
+.data
+M1 db 10,13, "Enter 16 bit no: $"
+M2 db 10,13, "Display 16 bit no: $"
+num db ?
+num1 db ?
+.code
+.startup
+mov ah,09;
+lea dx,M1;
+int 21h; display message 1
+mov ah,01;
+int 21h; taking input
+sub al,30h;
+mov cl,4;
+shl al, cl; shift 
+mov bh,al;
+mov ah, 01;
+int 21h;
+sub al, 30h;
+add bh, al;
+mov num,bh
+
+mov ah,01;
+int 21h; taking input
+sub al,30h;
+mov cl,4;
+shl al, cl; shift 
+mov bh,al;
+mov ah, 01;
+int 21h;
+sub al, 30h;
+add bh, al;
+mov num1,bh
+
+mov ah,09; display
+lea dx,M2
+int 21h
+
+mov bh,num
+and bh,0F0h
+mov cl,4
+shr bh,cl
+add bh, 30h
+mov dl,bh
+mov ah,02
+int 21h
+mov bh, num
+and bh, 0Fh
+add bh, 30h
+mov dl, bh
+mov ah,02
+int 21h
+
+mov bh,num1
+and bh,0F0h
+mov cl,4
+shr bh,cl
+add bh, 30h
+mov dl,bh
+mov ah,02
+int 21h
+mov bh, num1
+and bh, 0Fh
+add bh, 30h
+mov dl, bh
+mov ah,02
+int 21h
+.exit
+end
+
+hex to bcd:
+.model small 
+.stack
+.data
+m1 db 10,13,"hex to bcd:$"
+num dw 2311h
+.code
+disp macro xx
+mov ah,09h
+lea dx,xx
+int 21h
+endm
+
+.startup
+disp m1
+mov cl,0
+mov dx,0
+mov ax,num
+mov bx,0ah
+aa1:
+mov dx,0
+div bx
+push dx
+inc cl
+cmp ax,0
+jnz aa1
+aa2:
+pop dx
+add dl,30h
+mov ah,02
+int 21h 
+dec cl
+jnz aa2
+.exit
+end
+
+add sub 16bit:
+.model small
+.stack
+.data
+m1 db 10,13, "ADD:$"
+m2 db 10,13, "SUB:$"
+num1 dw 5378h
+num2 dw 4211h
+res dw ?
+.code 
+disp macro xx
+mov ah,09
+lea dx,xx
+int 21h
+endm
+
+
+disp1 proc
+mov bx,res
+and bh,0f0h
+mov cl,4
+shr bh,cl
+add bh,30h
+mov dl,bh
+mov ah,02
+int 21h
+mov bx,res
+and bh,0fh
+add bh,30h
+mov dl,bh
+mov ah,02
+int 21h
+
+and bl,0f0h
+mov cl,4
+shr bl,cl
+add bl,30h
+mov dl,bl
+mov ah,02
+int 21h
+mov bx,res
+and bl,0fh
+add bl,30h
+mov dl,bl
+mov ah,02
+int 21h
+
+ret
+disp1 endp
+.startup
+disp m1
+mov ax,num1
+add ax,num2
+mov res,ax
+call disp1
+disp m2
+mov ax,num1
+sub ax,num2
+mov res,ax
+call disp1
+jmp last
+
+last:
+.exit
+end
+
+string operation:
+.model small
+.stack
+.data
+m1 db 10,13,"Enter 1st string:$"
+m2 db 10,13,"Length of 1st string:$"
+m3 db 10,13,"Display 1st string:$"
+m4 db 10,13,"Enter 2nd string:$"
+m5 db 10,13,"Length of 2nd string:$"
+m6 db 10,13,"Display 2nd string:$"
+m7 db 10,13,"Comparison : $"
+m8 db 10,13,"Strings are Equal$"
+m9 db 10,13,"Strings are not Equal$"
+m10 db 10,13,"Concatenatd String is :$"
+str1 db 80,?,80 DUP(?)
+str2 db 80,?,80 DUP(?)
+str3 db 80,?,80 DUP(?)
+.code
+Disp macro xx
+mov ah,09h
+lea dx,xx
+int 21h
+endm
+.startup
+Disp m1 ;Enter 1st string
+mov ah,0Ah ;Read a string from the keyboard into buffer addressed by DX
+lea dx,str1
+int 21h
+Disp m2 ;Length of 1st string
+lea si,str1+1
+mov dl,[si]
+mov cl,dl
+add dl,30h
+mov ah,02h
+int 21h
+Disp m3 ;Display 1st string
+lea si,str1+2
+Back:
+mov dl,[si]
+mov ah,02h
+int 21h
+inc si
+dec cl
+jnz Back
+Disp m4 ;Enter 2nd string
+mov ah,0Ah
+lea dx,str2
+int 21h
+Disp m5 ;Length of 2nd string
+lea si,str2+1
+mov dl,[si]
+mov cl,dl
+add dl,30h
+mov ah,02h
+int 21h
+Disp m6 ;Display 2nd string
+lea si,str2+2
+Back1:
+mov dl,[si]
+mov ah,02h
+int 21h
+inc si
+dec cl
+jnz Back1
+Disp m7 ; Comparison
+lea si,str1+1
+mov cl,[si]
+lea di,str2+1
+mov ch,[di]
+cmp cl,ch
+jnz AA
+lea si,str1+2
+lea di,str2+2
+Back2:
+mov dl,[si]
+mov dh,[di]
+cmp dl,dh
+jnz AA
+inc si
+inc di
+dec cl
+jnz Back2
+Disp m8 ;Strings are Equal
+jmp con
+AA:
+Disp m9 ; Strings are not Equal
+con:
+Disp m10 ;Concatenatd String is
+lea si,str1+1
+mov cl,[si]
+mov bl,cl
+lea di,str2+1
+mov ch,[di]
+mov bh,ch
+add bl,bh
+lea si,str1+2
+lea di,str3+2
+Back3:
+mov dl,[si]
+mov [di],dl
+inc si
+inc di
+dec cl
+jnz back3
+lea si,str2+2
+Back4:
+mov dl,[si]
+mov [di],dl
+inc si
+inc di
+dec ch
+jnz Back4
+lea di,str3+2
+Back5:
+mov dl,[di]
+mov ah,02h
+int 21h
+inc di
+dec bl
+jnz Back5
+Exit:
+.exit
+end
+
+largest/smallest:
+***Largest number code***:
+
+.model small
+.data
+array DW 997H,1009H,1008H,1003H,998H
+M1 db 10,13,"largest no is:$"
+largeno dw 0 
+
+.code
+mov ax,@data
+mov ds,ax
+mov cx,05
+mov si,offset array
+mov ax,[si]
+dec cx
+up:inc si  
+
+inc si
+cmp ax,[si]
+jnc next
+mov ax,[si] 
+
+next:
+loop up
+mov largeno,ax
+mov ah,09
+lea dx,M1
+int 21h  
+
+MOV bx,largeno
+AND BH,0F0H
+MOV CL,4
+SHR BH,CL
+ADD BH,30H
+MOV DL,BH
+MOV AH,02
+INT 21H 
+
+MOV BX,largeno
+AND BH,0FH
+ADD BH,30H
+MOV DL,BH
+MOV AH,02
+INT 21H   
+
+MOV BX,largeno
+AND BL,0F0H
+MOV CL,4
+SHR BL,CL
+ADD BL,30H
+MOV DL,BL
+MOV AH,02
+INT 21H     
+
+MOV BX,largeno
+AND BL,0FH
+ADD BL,30H
+MOV DL,BL
+MOV AH,02   
+
+INT 21H
+mov ah,4ch
+int 21h     
+
+ends
+end
+
+
+***Smallest number code***:
+
+.model small
+.data
+array DW 1004H,1009H,1020H,1230H,2349H
+M1 db 10,13,"smallest no is:$"
+smallno dw 0
+
+.code
+mov ax,@data
+mov ds,ax
+mov cx,05
+mov si,offset array
+mov ax,[si]
+dec cx  
+
+up:inc si
+inc si
+cmp ax,[si]
+jc next
+mov ax,[si]
+
+next:
+loop up
+mov smallno,ax
+mov ah,09
+lea dx,M1
+int 21h   
+
+MOV bx,smallno
+AND BH,0F0H
+MOV CL,4
+SHR BH,CL
+ADD BH,30H
+MOV DL,BH
+MOV AH,02
+INT 21H   
+
+MOV BX,smallno
+AND BH,0FH
+ADD BH,30H
+MOV DL,BH
+MOV AH,02
+INT 21H   
+
+MOV BX,smallno
+AND BL,0F0H
+MOV CL,4
+SHR BL,CL
+ADD BL,30H
+MOV DL,BL
+MOV AH,02
+INT 21H   
+
+MOV BX,smallno
+AND BL,0FH
+ADD BL,30H
+MOV DL,BL
+MOV AH,02
+INT 21H   
+
+mov ah,4ch
+int 21h   
+
+ends
+end
+
+
+
+
+
+
+
+
+
+Theory:
+In this program, we need to find out the smallest element present in the array. This can be
+achieved by maintaining a variable min which initially will hold the value of the first element.
+Loop through the array by comparing the value of min with elements of the array. If any of the
+element&#39;s value is less than min, store the value of the element in min.
+In this program, we need to find out the greatest element present in the array. This can be
+achieved by maintaining a variable max which initially will hold the value of the first element.
+Loop through the array by comparing the value of max with elements of the array. If any of the
+element&#39;s value is greater than max, store the value of the element in max.
+The jc instruction leverages the carry flag to determine whether the comparison result indicates
+that the current element is smaller than the stored smallest value.
+ jc not_smaller is the key difference in this version of the program.
+ jc instruction performs a conditional jump if the carry flag (CF) is set, which happens when
+the value in AL is smaller than the value in BL after the cmp instruction.
+ If CF is set, the not_smaller label is jumped to, indicating that the current element is not
+smaller than the stored smallest value
+jc (jump if carry) instruction in an assembly program to find the largest number in a given array.
+By comparing values and using the carry flag, the program efficiently determines whether the
+current element is larger than the current largest value. This approach showcases how different
+conditional jumps can be used to control program flow based on comparison results.
+The LOOP instruction is a control flow instruction in the x86 assembly language, including the
+Intel 8086 instruction set. It&#39;s used for creating loops and iterating through a block of code a
+specified number of times. The LOOP instruction relies on the CX (counter) register to control
+the loop&#39;s execution.
+
+Functions and Interrupts:
+1. Display message on screen.
+
+Mov ah,09
+Lea dx, msg
+Int 21h
+2. Enter single char from user.
+Mov Ah,01
+Int 21h
+Return : AL= ASCII value
+3. Display single char on screen.
+Mov Ah,02
+Int 21h
+
+mixed mode:
+#include <stdio.h>
+#include <conio.h>
+
+int main() {
+    int a, b, c;
+    clrscr();
+    printf("Enter the first number: ");
+    scanf("%d", &a);
+    printf("Enter the second number: ");
+    scanf("%d", &b);
+
+    // Addition using inline Assembly
+    asm {
+        mov ax, a
+        mov bx, b
+        add ax, bx
+        mov c, ax
+    }
+    printf("\nThe addition of %d and %d is %d", a, b, c);
+
+    // Subtraction using inline Assembly
+    asm {
+        mov ax, a
+        mov bx, b
+        sub ax, bx
+        mov c, ax
+    }
+    printf("\nThe subtraction of %d and %d is %d", a, b, c);
+
+    // Multiplication using inline Assembly
+    asm {
+        mov ax, a
+        mov bx,b
+        mul bx
+        mov c, ax
+    }
+    printf("\nThe multiplication of %d and %d is %d", a, b, c);
+
+    // Division using inline Assembly
+    asm {
+        mov ax, a
+        mov bx,b
+        div bx
+        mov c, ax
+    }
+    printf("\nThe division of %d by %d is %d", a, b, c);
+
+    getch();
+    return 0;
+}
+
+mouse interfacing:
+.MODEL SMALL
+.STACK
+.DATA
+    M1 DB 10,13,"MOUSE DRIVER PRESENT$"
+    
+.CODE
+    DISP MACRO XX
+        MOV AH,09
+        LEA DX,XX
+        INT 21H
+    ENDM
+    
+.STARTUP
+    MOV AX,0000 
+    INT 33H
+    CMP AX,0
+    JE LAST
+    
+    DISP M1
+    MOV AX,0004H
+    MOV CX,0000H 
+    MOV DX,0000H 
+    INT 33H
+    
+    MOV AX,0007H 
+    MOV CX,0000 
+    MOV DX,00FFH 
+    INT 33H
+    
+    MOV AX,0008H 
+    MOV CX,0000 
+    MOV DX,00FFH
+    INT 33H
+    
+    P:
+        MOV AX,0001H
+        INT 33H
+        
+        MOV AX,0003H
+        INT 33H
+        
+        CMP BX,01
+        JE LEFT
+        JMP RIGHT
+
+    LEFT:
+        MOV AX,0011H 
+        INT 10H
+        
+        MOV AH,0CH 
+        INT 10H
+   
+    RIGHT:
+        MOV AX,0001H
+        INT 33H
+        
+        CMP BX,02
+        JE LAST
+        JMP P
+
+    LAST:
+        MOV AX,0000 
+        INT 10H
+.EXIT 
+ENDv
+
+
+
+
+
+
+
+
+Theory:
+Interface mouse using Int 33H
+Int 33h MS Mouse Interrupt
+Function 0 Reset
+Input
+AX = 0
+Output
+AX = mouse status -1 = installed
+0 = not installed
+BX = number of buttons
+Function 1 Show Mouse Cursor
+Input
+AX = 1
+Output
+NONE
+Function 2 Hide Mouse Cursor
+Input
+AX = 2
+Output
+NONE
+Function 3 Get Mouse Position &amp; Button Status
+Input
+AX = 3
+Output
+BX = Button Status
+xxxx xxxx xxxx xMRL
+M=middle (if present) R=right L=left
+0= not pressed 1 = pressed
+CX = Horizontal Mouse Cursor Position
+DX = Vertical Mouse Cursor Position
+(div positions by 2 for med res
+
+graphics; div by 8 for text mode)
+Function 4 Set Mouse Cursor Position
+Input
+AX = 4
+CX = new horizontal cursor position
+DX = new vertical cursor position
+Output
+NONE
+Function 5 Get Button Press Information
+Input
+AX = 5
+BX = button of interest (0=L; 1=R; 2=M)
+Output
+AX = button status (current status of ALL buttons)
+BX = number of buutton presses on specified button
+CX = horizontal position at last press
+DX = vertical position at last press
+Function 6 Get Button Release Information
+Input
+AX = 6
+BX = button of interest (0=L; 1=R; 2=M)
+Output
+AX = button status (current status of ALL buttons)
+BX = number of buutton presses on specified button
+CX = horizontal position at last release
+DX = vertical position at last release
+
+Function 7 Set Minimum and Maximum X Position
+Input
+AX = 7
+CX = new minimum horizontal cursor position
+DX = new maximum horizontal cursor position
+Output
+NONE
+
+Function 8 Set Minimum and Maximum Y Position
+Input
+AX = 8
+CX = new minimum vertical cursor position
+DX = new maximum vertical cursor position
+Output
+NONE
+Function 9 Define Graphics Cursor
+Input
+AX = 9
+BX = horizontal cursor hot spot (0,0) upper left
+CX = vertical cursor hot spot
+ES:DX = address of screen and cursor mask
+Output
+NONE
+
+Application: Use of Int 33 H to interface mouse with system.
+Program and Output:
+
+.MODEL SMALL
+.STACK
+.DATA
+    M1 DB 10,13,&quot;MOUSE DRIVER PRESENT$&quot;
+    
+.CODE
+    DISP MACRO XX
+        MOV AH,09
+        LEA DX,XX
+        INT 21H
+    ENDM
+    
+.STARTUP
+    MOV AX,0000 
+    INT 33H
+    CMP AX,0
+    JE LAST
+    
+    DISP M1
+    MOV AX,0004H
+
+    MOV CX,0000H 
+    MOV DX,0000H 
+    INT 33H
+    
+    MOV AX,0007H 
+    MOV CX,0000 
+    MOV DX,00FFH 
+    INT 33H
+    
+    MOV AX,0008H 
+    MOV CX,0000 
+    MOV DX,00FFH
+    INT 33H
+    
+    P:
+        MOV AX,0001H
+        INT 33H
+        
+        MOV AX,0003H
+        INT 33H
+        
+        CMP BX,01
+        JE LEFT
+        JMP RIGHT
+    LEFT:
+        MOV AX,0011H 
+        INT 10H
+        
+        MOV AH,0CH 
+        INT 10H
+   
+    RIGHT:
+        MOV AX,0001H
+        INT 33H
+        
+        CMP BX,02
+        JE LAST
+        JMP P
+    LAST:
+        MOV AX,0000 
+        INT 10H
+.EXIT 
+END
+
+palindrome checker:
+DATA SEGMENT
+            MSG1 DB 10,13,'ENTER ANY STRING :- $'
+            MSG2 DB 10,13,'ENTERED STRING IS :- $'
+            MSG3 DB 10,13,'LENGTH OF STRING IS :- $'
+            MSG4 DB 10,13,'NO, GIVEN STRING IS NOT A PALINDROME $' 
+            MSG5 DB 10,13,'THE GIVEN STRING IS A PALINDROME $'
+            MSG6 DB 10,13,'REVERSE OF ENTERED STRING IS :- $' 
+            P1 LABEL BYTE
+            M1 DB 0FFH
+            L1 DB ?
+            P11 DB 0FFH DUP ('$')
+                P22 DB 0FFH DUP ('$')
+        DATA ENDS 
+        DISPLAY MACRO MSG
+            MOV AH,9
+            LEA DX,MSG
+            INT 21H
+        ENDM   
+        CODE SEGMENT
+            ASSUME CS:CODE,DS:DATA
+        START:
+                MOV AX,DATA
+                MOV DS,AX                
+
+    DISPLAY MSG1
+
+    LEA DX,P1
+    MOV AH,0AH    
+    INT 21H
+
+    DISPLAY MSG2
+
+    DISPLAY P11
+
+    DISPLAY MSG3
+
+    MOV DL,L1
+    ADD DL,30H
+    MOV AH,2
+    INT 21H
+
+    DISPLAY MSG6
+
+    LEA SI,P11
+    LEA DI,P22
+
+    MOV DL,L1
+    DEC DL
+    MOV DH,0
+    ADD SI,DX
+    MOV CL,L1
+    MOV CH,0
+
+REVERSE:
+        MOV AL,[SI]
+        MOV [DI],AL
+        INC DI
+        DEC SI
+        LOOP REVERSE
+
+    DISPLAY P22
+
+    LEA SI,P11
+    LEA DI,P22   
+
+    MOV CL,L1
+    MOV CH,0
+
+CHECK:
+        MOV AL,[SI]
+        CMP [DI],AL
+        JNE NOTPALIN
+        INC DI
+        INC SI
+        LOOP CHECK
+
+
+    DISPLAY MSG5
+    JMP EXIT
+NOTPALIN:
+        DISPLAY MSG4
+
+EXIT:   MOV AH,4CH
+        INT 21H
+CODE ENDS
+END START
