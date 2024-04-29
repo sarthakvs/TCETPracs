@@ -1,0 +1,480 @@
+lexical_analyser
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <unordered_set>
+
+using namespace std;
+
+unordered_set<string> keywords = {"void", "using", "namespace", "int", "float", "double", "return",
+                                   "if", "else", "while", "for", "do", "switch", "case", "default",
+                                   "break", "continue", "goto", "const", "auto", "static", "extern",
+                                   "register", "sizeof", "typedef", "volatile", "constexpr"};
+
+unordered_set<string> headerFiles = {"<iostream>", "<cstring>", "<cstdlib>", "<cctype>", "<fstream>", "<string>"};
+
+bool isOperator(const string &token) {
+    return token == "+" || token == "-" || token == "*" || token == "/" || token == "^" ||
+           token == "&&" || token == "||" || token == "=" || token == "==" || token == "&" ||
+           token == "|" || token == "%" || token == "++" || token == "--" || token == "+=" ||
+           token == "-=" || token == "/=" || token == "*=" || token == "%=";
+}
+
+bool isSymbol(const string &token) {
+    return token == "(" || token == "{" || token == "[" || token == ")" || token == "}" ||
+           token == "]" || token == "<" || token == ">" || token == "()" || token == ";" ||
+           token == "<<" || token == ">>" || token == "," || token == "#";
+}
+
+bool isNumber(const string &token) {
+    try {
+        size_t pos;
+        stod(token, &pos);
+        return pos == token.size();
+    } catch (const std::invalid_argument&) {
+        return false; // Not a valid number
+    }
+}
+
+bool isKeyword(const string &token) {
+    return keywords.count(token);
+}
+
+bool isHeaderFile(const string &token) {
+    return headerFiles.count(token);
+}
+
+int main() {
+    ifstream file("prog.txt");
+    if (!file) {
+        cerr << "Error opening file." << endl;
+        return 1;
+    }
+
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string code = buffer.str();
+
+    string token;
+    istringstream iss(code);
+    while (iss >> token) {
+        if (token.empty()) continue;
+        if (token[0] == '"' && token[token.length() - 1] == '"') {
+            cout << token << " is a message" << endl;
+        } else if (token[0] == '/') {
+            cout << token << " is a comment" << endl;
+        } else {
+            if (isKeyword(token)) {
+                cout << token << " is a keyword" << endl;
+            } else if (isHeaderFile(token)) {
+                cout << token << " is a Header File" << endl;
+            } else if (isOperator(token)) {
+                cout << token << " is an operator" << endl;
+            } else if (isSymbol(token)) {
+                cout << token << " is a symbol" << endl;
+            } else if (isNumber(token)) {
+                cout << token << " is a number" << endl;
+            } else { // Check if token is an identifier
+                cout << token << " is an identifier" << endl;
+            }
+        }
+    }
+
+    return 0;
+}
+prog.txt:
+#include <iostream>
+using namespace std;
+int main(){
+    int a , b , c = 20 ;
+    cout << c ;
+    return 0 ;
+}
+
+
+3ac_triple_quad.py:
+# Define a function to convert an infix expression to postfix notation
+def infix_to_postfix(expression):
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    postfix = []
+    stack = []
+    
+    for char in expression:
+        if char.isalnum():
+            postfix.append(char)
+        elif char == '(':
+            stack.append(char)
+        elif char == ')':
+            while stack and stack[-1] != '(':
+                postfix.append(stack.pop())
+            stack.pop()  # Pop the left parenthesis
+        else:
+            while stack and stack[-1] != '(' and precedence[char] <= precedence[stack[-1]]:
+                postfix.append(stack.pop())
+            stack.append(char)
+    
+    while stack:
+        postfix.append(stack.pop())
+    
+    return postfix
+
+# Define a function to generate triples from a postfix expression
+def generate_triples(postfix):
+    stack = []
+    code = []
+    
+    for token in postfix:
+        if token.isalnum():
+            stack.append(token)
+        else:
+            arg2 = stack.pop()
+            arg1 = stack.pop()
+            code.append((token, arg1, arg2))
+            stack.append("t" + str(len(code)))
+    
+    return code
+
+# Define a function to generate quadruples from a postfix expression
+def generate_quadruples(postfix):
+    stack = []
+    code = []
+    temp_count = 1
+    
+    for token in postfix:
+        if token.isalnum():
+            stack.append(token)
+        else:
+            arg2 = stack.pop()
+            arg1 = stack.pop()
+            result = "t" + str(temp_count)
+            temp_count += 1
+            code.append((token, arg1, arg2, result))
+            stack.append(result)
+    
+    return code
+
+# Define a function to generate three-address code from a postfix expression
+def generate_three_address_code(postfix):
+    stack = []
+    code = []
+    temp_count = 1
+
+    for token in postfix:
+        if token.isalnum():
+            stack.append(token)
+        else:
+            arg2 = stack.pop()
+            arg1 = stack.pop()
+            result = "t" + str(temp_count)
+            temp_count += 1
+            code.append((result, arg1, token, arg2))
+            stack.append(result)
+            print(result, "=", arg1, token, arg2)
+
+# Main function
+def main():
+    # Read in an arithmetic expression from the user
+    expression = "(a+(b*c))/(a-(b*c))"
+    #input("Enter an arithmetic expression: ")
+    
+    # Convert the expression to postfix notation
+    postfix = infix_to_postfix(expression)
+    print("Postfix notation:", " ".join(postfix))
+    
+    # Generate and output the quadruples
+    quadruples = generate_quadruples(postfix)
+    print("Quadruples:")
+    for q in quadruples:
+        print("({}, {}, {}, {})".format(q[0], q[1], q[2], q[3]))
+        
+    # Generate and output the triples
+    triples = generate_triples(postfix)
+    print("Triples:")
+    for t in triples:
+        print("({}, {}, {})".format(t[0], t[1], t[2]))
+    
+    # Generate and output the three-address code
+    print("Three-address code:")
+    generate_three_address_code(postfix)
+
+if __name__ == "__main__":
+    main()
+
+
+first_follow_final.py
+# Function to compute the FIRST set for a given string
+def first(string):
+    first_ = set()
+    # If the string is a non-terminal, calculate FIRST for each alternative
+    if string in non_terminals:
+        for alt in productions_dict[string]:
+            first_ |= first(alt)
+    # If the string is a terminal, epsilon, or empty, FIRST is the string itself
+    elif string in terminals or string == '' or string == '@':
+        first_ = {string}
+    else:
+        # Calculate FIRST for the first character of the string
+        first_ |= first(string[0])
+        # If FIRST contains epsilon, compute FIRST for subsequent characters
+        if '@' in first_:
+            i = 1
+            while '@' in first_:
+                # Remove epsilon from FIRST
+                first_ -= {'@'}
+                # If end of string is reached, add epsilon to FIRST
+                if i == len(string):
+                    first_ |= {'@'}
+                    break
+                # Calculate FIRST for the rest of the string
+                first_ |= first(string[i:])
+                i += 1
+    return first_
+
+# Function to compute the FOLLOW set for a given non-terminal symbol
+def follow(nT):
+    follow_ = set()
+    # If it's the starting symbol, add end of input marker to FOLLOW
+    if nT == starting_symbol:
+        follow_ = {'$'}
+    # Iterate over productions to compute FOLLOW sets
+    for nt, rhs in productions_dict.items():
+        for alt in rhs:
+            for idx, char in enumerate(alt):
+                if char == nT:
+                    following_str = alt[idx + 1:]
+                    if following_str == '':
+                        # If no symbols follow, add FOLLOW of the non-terminal
+                        if nt != nT:
+                            follow_ |= follow(nt)
+                    else:
+                        # Add FIRST of following string to FOLLOW
+                        follow_ |= first(following_str) - {'@'}
+                        # If FIRST contains epsilon, add FOLLOW of non-terminal
+                        if '@' in first(following_str):
+                            follow_ |= follow(nt)
+    return follow_
+
+# Input gathering
+terminals = [input(f"Enter terminal {i + 1}: ") for i in range(int(input("Enter no. of terminals: ")))]
+non_terminals = [input(f"Enter non-terminal {i + 1}: ") for i in range(int(input("Enter no. of non-terminals: ")))]
+starting_symbol = input("Enter the starting symbol: ")
+productions_dict = {nt: [] for nt in non_terminals}
+
+# Parsing productions
+for _ in range(int(input("Enter no. of productions: "))):
+    nt, rhs = input("Enter production: ").split("->")
+    productions_dict[nt].extend(rhs.split("/"))
+
+# Computing and printing FIRST sets
+print("\nFIRST sets:")
+for nt in non_terminals:
+    print(f"FIRST({nt}) = {first(nt)}")
+# Computing FOLLOW sets
+FOLLOW = {nt: set() for nt in non_terminals}
+FOLLOW[starting_symbol] = {'$'}
+for nt in non_terminals:
+    FOLLOW[nt] |= follow(nt)
+# Printing FOLLOW sets
+print("\nFOLLOW sets:")
+for nt in non_terminals:
+    print(f"FOLLOW({nt}) = {str(FOLLOW[nt])}")
+
+"""
+Enter no. of terminals: 6
+Enter terminal 1: a
+Enter terminal 2: b
+Enter terminal 3: c
+Enter terminal 4: h
+Enter terminal 5: g
+Enter terminal 6: f
+Enter no. of non-terminals: 6
+Enter non-terminal 1: S
+Enter non-terminal 2: B
+Enter non-terminal 3: C
+Enter non-terminal 4: D
+Enter non-terminal 5: E
+Enter non-terminal 6: F
+Enter the starting symbol: S
+Enter no. of productions: 6
+Enter production: S->aBDh
+Enter production: B->cC
+Enter production: C->bC/@
+Enter production: D->EF
+Enter production: E->g/@
+Enter production: F->f/@
+
+FIRST sets:
+FIRST(S) = {'a'}
+FIRST(B) = {'c'}
+FIRST(C) = {'@', 'b'}
+FIRST(D) = {'g', 'f', '@'}
+FIRST(E) = {'g', '@'}
+FIRST(F) = {'@', 'f'}
+
+FOLLOW sets:
+FOLLOW(S) = {'$'}
+FOLLOW(B) = {'g', 'f', 'h'}
+FOLLOW(C) = {'g', 'f', 'h'}
+FOLLOW(D) = {'h'}
+FOLLOW(E) = {'f', 'h'}
+FOLLOW(F) = {'h'}
+"""
+
+macro_expanded.py
+class MacroProcessor:
+    def __init__(self):
+        self.macros = {}
+
+    def define_macro(self, name, definition):
+        self.macros[name] = definition
+
+    def expand_macros(self, source):
+        lines = source.split('\n')
+        expanded_lines = []
+        for line in lines:
+            tokens = line.split()
+            expanded_tokens = []
+            for token in tokens:
+                if token in self.macros:
+                    expanded_tokens.extend(self.macros[token])
+                else:
+                    expanded_tokens.append(token)
+            expanded_lines.append(expanded_tokens)
+        return expanded_lines
+
+    def resolve_symbols(self, source):
+        lines = source.split('\n')
+        resolved_lines = []
+        for line in lines:
+            tokens = line.split()
+            resolved_tokens = []
+            for token in tokens:
+                if not token.startswith('$'):
+                    resolved_tokens.append(token)
+            resolved_lines.append(resolved_tokens)
+        return resolved_lines
+
+    def process_source(self, source):
+        # First pass: Expand macros
+        expanded_lines = self.expand_macros(source)
+        # Second pass: Resolve symbols
+        resolved_lines = self.resolve_symbols('\n'.join([' '.join(line) for line in expanded_lines]))
+        return '\n'.join([' '.join(line) for line in resolved_lines])
+
+# Example usage:
+if __name__ == "__main__":
+    processor = MacroProcessor()
+    # Define macros
+    processor.define_macro('LOOP', ['MOV AX, 0', 'MOV CX, 10', 'L1:', 'ADD AX, 1', 'LOOP L1'])
+    processor.define_macro('MSG', ['MOV AH, 9', 'INT 21h'])
+    # Source code with macros
+    source_code = """
+    LOOP
+    MSG $HELLO
+    HLT
+    $HELLO DB 'Hello, world!', '$'
+    """
+    # Process the source code
+    processed_code = processor.process_source(source_code)
+    print(processed_code)
+
+optimization_tac.py:
+class ThreeAddressCode:
+    def __init__(self, op, arg1, arg2, result):
+        self.op = op
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.result = result
+
+def optimize_code(three_address_code):
+    optimized_code = []
+    expressions = {}
+
+    for tac in three_address_code:
+        expression = (tac.op, tac.arg1, tac.arg2)
+        if expression not in expressions:
+            expressions[expression] = tac.result
+            optimized_code.append(tac)
+        else:
+            tac.arg1 = expressions[expression]
+            tac.arg2=""
+            tac.op = ""
+            optimized_code.append(tac)
+
+    return optimized_code
+
+def simplify_algebraic(optimized_code):
+    simplified_code = []
+
+    for tac in optimized_code:
+        if tac.op == '+':
+            if tac.arg1 == 0:
+                tac.result = tac.arg2
+            elif tac.arg2 == 0:
+                tac.result = tac.arg1
+            elif isinstance(tac.arg1, int) and isinstance(tac.arg2, int):
+                tac.arg1 = tac.arg1 + tac.arg2
+                tac.arg2 = ' '
+                tac.op = ' '
+                simplified_code.append(tac)
+            else:
+                simplified_code.append(tac)
+        elif tac.op == '-':
+            if tac.arg2 == 0:
+                tac.result = tac.arg1
+            elif isinstance(tac.arg1, int) and isinstance(tac.arg2, int):
+                tac.arg1 = tac.arg1 - tac.arg2
+                tac.arg2 = ' '
+                tac.op = ' '
+                simplified_code.append(tac)
+            else:
+                simplified_code.append(tac)
+        elif tac.op == '*':
+            if tac.arg2 == 0 or tac.arg1 == 0:
+                tac.result = 0
+            elif tac.arg2 == 1:
+                tac.result = tac.arg1
+            elif tac.arg1 == 1:
+                tac.result = tac.arg2
+            elif isinstance(tac.arg1, int) and isinstance(tac.arg2, int):
+                tac.arg1 = tac.arg1 * tac.arg2
+                tac.arg2 = ' '
+                tac.op = ' '
+                simplified_code.append(tac)
+            else:
+                simplified_code.append(tac)
+        else:
+            simplified_code.append(tac)
+
+    return simplified_code
+
+def main():
+    # Example 3-address code
+    three_address_code = [
+        ThreeAddressCode('+', 2, 3, 't1'),
+        ThreeAddressCode('*', 't1', 5, 't2'),
+        ThreeAddressCode('*', 't1', 5, 't3'),
+        ThreeAddressCode('-', 't3', 5, 't4'),
+        ThreeAddressCode('+', 't2', 0, 't5'),
+        ThreeAddressCode('+', 't4', 't5', 't6')
+    ]
+
+    # Print original code for comparison
+    print("\nOriginal Code:")
+    for tac in three_address_code:
+        print(f"{tac.result} = {tac.arg1} {tac.op} {tac.arg2}")
+    # Common subexpression elimination
+    optimized_code = optimize_code(three_address_code)
+    
+    # Algebraic simplification
+    simplified_code = simplify_algebraic(optimized_code)
+
+    # Print optimized and simplified code
+    print("Optimized and Simplified Code:")
+    for tac in simplified_code:
+        print(f"{tac.result} = {tac.arg1} {tac.op} {tac.arg2}")
+
+
+if __name__ == "__main__":
+    main()
