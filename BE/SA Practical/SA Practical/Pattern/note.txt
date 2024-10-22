@@ -1,0 +1,27 @@
+Certainly! Here's a brief explanation of each of the design patterns mentioned:
+
+1. **Singleton Pattern**:
+   - The Singleton Pattern ensures that a class has only one instance and provides a global point of access to that instance.
+   - It's commonly used for managing resources that should be shared throughout an application's lifetime.
+
+2. **Abstract Factory Pattern**:
+   - The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+   - It allows you to create products with different variants while ensuring they are compatible.
+
+3. **Facade Pattern**:
+   - The Facade Pattern provides a simplified interface to a complex subsystem of classes, making it easier to use.
+   - It hides the complexity and details of the subsystem from the client code.
+
+4. **Composite Pattern**:
+   - The Composite Pattern lets you compose objects into tree structures to represent part-whole hierarchies.
+   - It allows clients to treat individual objects and compositions of objects uniformly.
+
+5. **Observer Pattern**:
+   - The Observer Pattern defines a one-to-many dependency between objects, so when one object changes its state, all its dependents are notified and updated automatically.
+   - It's used for implementing distributed event handling systems.
+
+6. **Strategy Pattern**:
+   - The Strategy Pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable.
+   - It allows clients to choose an algorithm from a family of algorithms at runtime.
+
+These design patterns provide solutions to common software design problems and promote maintainability, flexibility, and reusability in your code. Each pattern addresses a specific type of problem and provides a structured way to solve it, leading to cleaner and more organized software architecture.

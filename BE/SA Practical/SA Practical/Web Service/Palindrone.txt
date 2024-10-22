@@ -1,0 +1,24 @@
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class PalindromeController {
+    @GetMapping("/checkPalindrome/{input}")
+    public boolean checkPalindrome(@PathVariable String input) {
+        // Remove spaces and convert the input to lowercase for a case-insensitive check
+        String cleanInput = input.replaceAll("\\s+", "").toLowerCase();
+        int left = 0;
+        int right = cleanInput.length() - 1;
+
+        while (left < right) {
+            if (cleanInput.charAt(left) != cleanInput.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+}

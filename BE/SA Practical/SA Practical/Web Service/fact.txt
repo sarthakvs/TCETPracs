@@ -1,0 +1,22 @@
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/factorial")
+public class FactorialController {
+
+    @GetMapping("/{n}")
+    public long calculateFactorial(@PathVariable int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("Factorial calculation is not defined for negative numbers.");
+        }
+
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+}

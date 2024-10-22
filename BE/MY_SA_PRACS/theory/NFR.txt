@@ -1,0 +1,31 @@
+A Non-Functional Requirements (NFR) Diagram is a graphical representation that outlines the non-functional aspects of a system or application. Non-functional requirements define the criteria under which a system operates, focusing on attributes like performance, security, scalability, usability, reliability, and more. NFR diagrams help capture these requirements and visually link them to the system components or processes that must satisfy them.
+
+Key Elements of an NFR Diagram:
+Non-Functional Requirements (NFRs): These are requirements that describe how the system performs its functions rather than what the system does. Common types of NFRs include:
+
+Performance (e.g., response time, throughput)
+Scalability (e.g., ability to handle growth)
+Security (e.g., encryption, authentication)
+Usability (e.g., ease of use)
+Reliability (e.g., system uptime, fault tolerance)
+Maintainability (e.g., ease of updates or bug fixes)
+Portability (e.g., compatibility with different platforms)
+System Components or Functional Elements: These are the parts of the system (e.g., modules, services, processes) that need to comply with or be influenced by the NFRs. They are often represented as nodes or boxes in the diagram, with NFRs connected to them.
+
+Connections (Relationships): Arrows or lines indicate the association between the NFRs and the components that need to satisfy them. This helps illustrate which part of the system is responsible for fulfilling specific non-functional criteria.
+
+Purpose of an NFR Diagram:
+Capture Non-Functional Aspects: NFR diagrams help identify and visualize system quality attributes that may not be immediately apparent in functional requirements.
+Improve System Design: By focusing on non-functional attributes, the system can be optimized for performance, security, reliability, etc.
+Communication Tool: Similar to functional requirements diagrams, NFR diagrams provide a clear communication channel between stakeholders, developers, and architects.
+Advantages of NFR Diagrams:
+Holistic View of System Quality: Provides a clear and visual understanding of how the system should perform under various conditions.
+Ensures Comprehensive Coverage: Helps ensure that critical quality aspects are not overlooked during the system design phase.
+Alignment with Stakeholders: Serves as a visual tool for stakeholders to validate that all necessary system quality attributes are considered.
+Disadvantages of NFR Diagrams:
+Complexity: In systems with many non-functional requirements, the diagram can become complex and difficult to interpret.
+Lack of Standardization: Unlike DFDs or UML diagrams, there isn’t a universally accepted format for NFR diagrams, which can lead to inconsistency.
+Common Tools for Creating NFR Diagrams:
+UML (Unified Modeling Language): UML diagrams like use-case diagrams or class diagrams can sometimes be adapted to include non-functional requirements.
+SysML (Systems Modeling Language): A modeling language that can capture both functional and non-functional requirements.
+An NFR diagram is a valuable artifact in software architecture and system design processes to ensure that non-functional aspects like performance, security, and usability are met.
